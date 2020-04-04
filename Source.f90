@@ -7,6 +7,7 @@ program Integral
     call GraphicWindow()
     call GraphicAxes()
     call IntegralErrorLogArrayAndGraphic()
+    !write(*,*) IntegralError(2.0, 10)
     !*****************************************************************************************!
     contains
     real function f(xt)
@@ -46,13 +47,16 @@ program Integral
     subroutine IntegralErrorLogArrayAndGraphic()
     real I_real
         integer i, N_i
+        real temp
+        real logN_i
         call RANDOM_SEED()
         bool2 = SetColor(4)
         I_real = 2.0 ! Задание релаьного значения вычисляемого интеграла
-        do i=0,500
-            N_i = floor(10 + DBLE((1000000 - 10)) / 500.0 * i)
-            x = log10(DBLE(N_i))
-            y = log10(DBLE(IntegralError(I_real, N_i)))
+        do i=0,100
+            logN_i = 1 + DBLE((6 - 1)) / 100.0 * i
+            x = logN_i
+            temp = x * 2.3025851 !Число - натуральный логарифм десяти.
+            y = log10(DBLE(IntegralError(I_real, floor(exp(temp)))))
             bool2 = SetPixel_w( DBLE(x), DBLE(y) )
         end do
     end subroutine IntegralErrorLogArrayAndGraphic
