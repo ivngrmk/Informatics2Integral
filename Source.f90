@@ -3,11 +3,13 @@ program Integral
     !Объявление переменных
     real, parameter :: pi = 3.1415926535
     integer N
+    type (wxycoord) wxy
     !*****************************************************************************************!
     call GraphicWindow()
     call GraphicAxes()
+    open(1, file= "out.txt")
     call IntegralErrorLogArrayAndGraphic()
-    !write(*,*) IntegralError(2.0, 10)
+    close(1)
     !*****************************************************************************************!
     contains
     real function f(xt)
@@ -52,12 +54,14 @@ program Integral
         call RANDOM_SEED()
         bool2 = SetColor(4)
         I_real = 2.0 ! Задание релаьного значения вычисляемого интеграла
-        do i=0,100
-            logN_i = 1 + DBLE((6 - 1)) / 100.0 * i
+        call MoveTo_w(DBLE(1), DBLE(-0.5), wxy) !Точка от балды
+        do i=0,200
+            logN_i = 1 + DBLE((6 - 1)) / 200.0 * i
             x = logN_i
             temp = x * 2.3025851 !Число - натуральный логарифм десяти.
             y = log10(DBLE(IntegralError(I_real, floor(exp(temp)))))
-            bool2 = SetPixel_w( DBLE(x), DBLE(y) )
+            bool2 = LineTo_w( DBLE(x), DBLE(y) )
+            write(1,*)  x, " ", y
         end do
     end subroutine IntegralErrorLogArrayAndGraphic
     !---------------------------------------------------------------------------------------!
@@ -74,7 +78,6 @@ program Integral
     subroutine GraphicAxes()
         real xl, yl, xr, yr, scale_width
         real x, y
-        type (wxycoord) wxy
         xl = -0.1; yl = -6.0; xr = 7.0; yr = 0.1; scale_width = 0.05 !Обязательно должны содержать начало координат
         bool2 = SetWindow(.TRUE., DBLE(xl), DBLE(yl), DBLE(xr), DBLE(yr))
         x = xl
