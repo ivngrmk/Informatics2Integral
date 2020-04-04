@@ -4,10 +4,9 @@ program Integral
     real, parameter :: pi = 3.1415926535
     integer N
     !*****************************************************************************************!
-    !read(*,*) N
-    !write(*,*) IntegralError(2.0)
     call GraphicWindow()
     call GraphicAxes()
+    call IntegralErrorLogArrayAndGraphic()
     !*****************************************************************************************!
     contains
     real function f(xt)
@@ -32,17 +31,31 @@ program Integral
         ComputeIntegral = real(N_true) / real(N_all) * pi
     end function ComputeIntegral
     !---------------------------------------------------------------------------------------!
-    real function IntegralError(I_real)
+    real function IntegralError(I_real, N_t)
         real I_real
         real Sum
-        integer i
+        integer i, N_t
         call RANDOM_SEED()
         Sum = 0
         do i=1,100
-            Sum = Sum + abs(ComputeIntegral(N) - I_real)
+            Sum = Sum + abs(ComputeIntegral(N_t) - I_real)
         end do
         IntegralError = Sum / 100.0
     end function IntegralError
+    !---------------------------------------------------------------------------------------!
+    subroutine IntegralErrorLogArrayAndGraphic()
+    real I_real
+        integer i, N_i
+        call RANDOM_SEED()
+        bool2 = SetColor(4)
+        I_real = 2.0 ! Задание релаьного значения вычисляемого интеграла
+        do i=0,500
+            N_i = floor(10 + DBLE((1000000 - 10)) / 500.0 * i)
+            x = log10(DBLE(N_i))
+            y = log10(DBLE(IntegralError(I_real, N_i)))
+            bool2 = SetPixel_w( DBLE(x), DBLE(y) )
+        end do
+    end subroutine IntegralErrorLogArrayAndGraphic
     !---------------------------------------------------------------------------------------!
     subroutine GraphicWindow() !Создаёт окно для вывода графики. Фон - белый, граница - чёрная, само окно - белое.
         logical(2) bool2
@@ -61,13 +74,13 @@ program Integral
         xl = -0.1; yl = -6.0; xr = 7.0; yr = 0.1; scale_width = 0.05 !Обязательно должны содержать начало координат
         bool2 = SetWindow(.TRUE., DBLE(xl), DBLE(yl), DBLE(xr), DBLE(yr))
         x = xl
-        do while (ceiling(x) <= floor(xr))
+        do while (ceiling(x) <= floor(xr)) !Градуировка шкалы абсцисс.
             call MoveTo_w(DBLE(ceiling(x)), DBLE(0.0 - scale_width), wxy)
             bool2 = LineTo_w(DBLE(ceiling(x)), DBLE(0.0 + scale_width))
             x = x + 1
         end do
         y = yl
-        do while (ceiling(y) <= floor(yr))
+        do while (ceiling(y) <= floor(yr)) !Градуировка шкалы ординат.
             call MoveTo_w(DBLE(0.0 - scale_width), DBLE(ceiling(y)), wxy)
             bool2 = LineTo_w(DBLE(0.0 + scale_width), DBLE(ceiling(y)))
             y = y + 1
