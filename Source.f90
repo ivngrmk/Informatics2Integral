@@ -3,9 +3,8 @@ program Integral
     real, parameter :: pi = 3.1415926535
     integer N
     !*****************************************************************************************!
-    call RANDOM_SEED()
     read(*,*) N
-    write(*,*) ComputeIntegral(N)
+    write(*,*) IntegralError(2.0)
     
     !*****************************************************************************************!
     contains
@@ -31,13 +30,16 @@ program Integral
         ComputeIntegral = real(N_true) / real(N_all) * pi
     end function ComputeIntegral
     !---------------------------------------------------------------------------------------!
-    logical function IntegralError(I_real)
-        real sum
+    real function IntegralError(I_real)
+        real I_real
+        real Sum
         integer i
-        sum = 0
+        call RANDOM_SEED()
+        Sum = 0
         do i=1,100
-            
+            Sum = Sum + abs(ComputeIntegral(N) - I_real)
         end do
+        IntegralError = Sum / 100.0
     end function IntegralError
 end
     
